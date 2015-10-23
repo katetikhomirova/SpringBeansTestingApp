@@ -1,0 +1,39 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+
+	<!-- Properties beans -->
+	<bean id="storageProperties"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location" value="classpath:storage.properties" />
+	</bean>
+
+	<!-- DAO beans -->
+	<bean id="userDao" class="com.kture.spring.dao.StorageUserDAO">
+		<property name="storage" ref="storage" />
+	</bean>
+	<bean id="productDao" class="com.kture.spring.dao.StorageProductDAO">
+		<property name="storage" ref="storage" />
+	</bean>
+
+	<!-- Service beans -->
+	<bean id="userService" class="com.kture.spring.services.UserService">
+		<property name="dao" ref="userDao" />
+	</bean>
+	<bean id="productService" class="com.kture.spring.services.ProductService">
+		<property name="dao" ref="productDao" />
+	</bean>
+
+	<!-- Facade bean -->
+	<bean id="market" class="com.kture.spring.facade.Market">
+		<constructor-arg name="u" ref="userService" />
+		<constructor-arg name="p" ref="productService" />
+	</bean>
+
+	<!-- Storage bean -->
+	<bean id="storage" class="com.kture.spring.storage.MarketStorage">
+		<constructor-arg value="${storage}" />
+	</bean>
+
+</beans>
