@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.kture.spring.entity.Product;
 import com.kture.spring.entity.User;
+import com.kture.spring.entity.UserAccount;
 
 public class Printer {
 
@@ -35,5 +36,19 @@ public class Printer {
 			}
 		} else
 			System.out.println("No products found!");
+	}
+
+	public static void printUserAccounts(List<UserAccount> accounts) {
+		if (accounts != null && accounts.size() > 0) {
+			System.out.println("User accounts:\n id\tuserId\tfund");
+			System.out
+					.println("______________________________________________");
+			for (UserAccount a : accounts) {
+				if (a != null)
+					System.out.println(a.getId() + " \t" + a.getUserId() + "\t"
+							+ a.getFund());
+			}
+		} else
+			System.out.println("No user account found!");
 	}
 }

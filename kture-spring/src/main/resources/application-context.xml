@@ -1,7 +1,11 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
-	http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+	 	http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd">
+
 
 	<!-- Properties beans -->
 	<bean id="storageProperties"
@@ -10,12 +14,20 @@
 	</bean>
 
 	<!-- DAO beans -->
-	<bean id="userDao" class="com.kture.spring.dao.StorageUserDAO">
-		<property name="storage" ref="storage" />
+
+	<bean id="userDao" class="com.kture.spring.dao.jdbc.MySqlUserDAO">
+		<property name="dataSource" ref="dataSource" />
 	</bean>
-	<bean id="productDao" class="com.kture.spring.dao.StorageProductDAO">
-		<property name="storage" ref="storage" />
+	<bean id="productDao" class="com.kture.spring.dao.jdbc.MySqlProductDAO">
+		<property name="dataSource" ref="dataSource" />
 	</bean>
+	<bean id="userAccountDao" class="com.kture.spring.dao.jdbc.MySqlUserAccountDAO">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<!-- <bean id="userDao" class="com.kture.spring.dao.StorageUserDAO"> <property 
+		name="storage" ref="storage" /> </bean> <bean id="productDao" class="com.kture.spring.dao.StorageProductDAO"> 
+		<property name="storage" ref="storage" /> </bean> -->
 
 	<!-- Service beans -->
 	<bean id="userService" class="com.kture.spring.services.UserService">
@@ -24,16 +36,34 @@
 	<bean id="productService" class="com.kture.spring.services.ProductService">
 		<property name="dao" ref="productDao" />
 	</bean>
+	<bean id="userAccountService" class="com.kture.spring.services.UserAccountService">
+		<property name="dao" ref="userAccountDao" />
+	</bean>
 
 	<!-- Facade bean -->
 	<bean id="market" class="com.kture.spring.facade.Market">
 		<constructor-arg name="u" ref="userService" />
 		<constructor-arg name="p" ref="productService" />
+		<constructor-arg name="a" ref="userAccountService" />
+	</bean>
+
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://localhost:3306/MarketDB" />
+		<property name="username" value="root" />
+		<property name="password" value="root" />
+	</bean>
+
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<!-- Storage bean -->
-	<bean id="storage" class="com.kture.spring.storage.MarketStorage">
-		<constructor-arg value="${storage}" />
-	</bean>
+	<!-- <bean id="storage" class="com.kture.spring.storage.MarketStorage"> 
+		<property name="userFilePath" value="${userFilePath}" /> <property name="productFilePath" 
+		value="${productFilePath}" /> </bean> -->
 
 </beans>

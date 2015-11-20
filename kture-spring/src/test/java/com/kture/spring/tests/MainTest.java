@@ -1,5 +1,6 @@
 package com.kture.spring.tests;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +11,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import com.kture.spring.entity.Product;
 import com.kture.spring.entity.User;
 import com.kture.spring.facade.Market;
+import com.kture.spring.utils.CsvFilePaser;
 import com.kture.spring.utils.Printer;
+import com.kture.spring.utils.ProductQueries;
+import com.kture.spring.utils.UserAccountQueries;
+import com.kture.spring.utils.UserQueries;
 
 public class MainTest {
 
@@ -30,114 +35,37 @@ public class MainTest {
 
 	@Test
 	public void testCreating() throws Exception {
-
 		Printer.printUsers(market.getUsers());
 		Printer.printProducts(market.getProducts());
 	}
 
-	@Test
-	public void userServiceTest() {
-		
-		System.out.println("\n--------------------\nSearching user with id=1:");
-		tempUsers.add(market.getUserById(1));
-		Printer.printUsers(tempUsers);
-		tempUsers.clear();
-
-		System.out
-				.println("\n--------------------\nSearching user with id=10:");
-		if (market.getUserById(10) != null)
-			tempUsers.add(market.getUserById(10));
-		Printer.printUsers(tempUsers);
-		tempUsers.clear();
-
-		System.out
-				.println("\n--------------------\nCreating user with name =\"Den\""
-						+ " email=\"1@gmail.com\" phoneNumber=\"3040:\"");
-		market.createUser(new User("Den", "1@gmail.com", "3040"));
-		Printer.printUsers(market.getUsers());
-
-		System.out.println("\n--------------------\nRemoving user with id=2:");
-		market.deleteUser(2);
-		Printer.printUsers(market.getUsers());
-
-		System.out.println("\n--------------------\nRemoving user with id=10:");
-		market.deleteUser(10);
-		Printer.printUsers(market.getUsers());
-
-		System.out.println("\n--------------------\nUpdate user with id=1:");
-		User update = new User("Kate", "2@gmail.com", "1234");
-		update.setId(1);
-		market.updateUser(update);
-		Printer.printUsers(market.getUsers());
-
-		System.out.println("\n--------------------\nGet users by name Den:");
-		if (market.getUsersByName("Den").size() != 0)
-			Printer.printUsers(market.getUsersByName("Den"));
-
-		System.out
-				.println("\n--------------------\nGet users by email \"2@gmail.com\":");
-		if (market.getUserByEmail("2@gmail.com") != null)
-			tempUsers.add(market.getUserByEmail("2@gmail.com"));
-		Printer.printUsers(tempUsers);
-		tempProducts.clear();
-
-		System.out
-				.println("\n--------------------\nGet users by email \"3@gmail.com\":");
-		if (market.getUserByEmail("3@gmail.com") != null)
-			tempUsers.add(market.getUserByEmail("3@gmail.com"));
-		Printer.printUsers(tempUsers);
-		tempProducts.clear();
-	}
-
-	@Test
-	public void productServiceTest() {
-		System.out.println("\n--------------------\nCreate 2 cookies:");
-		market.createProduct(new Product("cookie", "tasty", 23, 1));
-		market.createProduct(new Product("cookie", "tasty", 12, 1));
-		Printer.printProducts(market.getProducts());
-
-		System.out
-				.println("\n--------------------\nGet products with title cookie:");
-		Printer.printProducts(market.getProductsByTitle("cookie"));
-
-		System.out.println("\n--------------------\nUpdate cookie:");
-		Product updateP = new Product("cookie", "tasty", 35, 1);
-		updateP.setId(3);
-		market.updateProduct(updateP);
-		Printer.printProducts(market.getProductsByTitle("cookie"));
-
-		System.out.println("\n--------------------\nGet product by user id 1:");
-		Printer.printProducts(market.getProductsByUserId(1));
-
-		System.out.println("\n--------------------\nGet product by id 2:");
-		if (market.getProductById(2) != null)
-			tempProducts.add(market.getProductById(2));
-		Printer.printProducts(tempProducts);
-		tempProducts.clear();
-
-		System.out.println("\n--------------------\nRemove product by id 2:");
-		market.deleteProduct(2);
-		Printer.printProducts(market.getProducts());
-
-		System.out.println("\n--------------------\nGet product by id 2:");
-		if (market.getProductById(2) != null)
-			tempProducts.add(market.getProductById(2));
-		Printer.printProducts(tempProducts);
-		tempProducts.clear();
-
-		market.deleteProduct(10);
-	}
-
+	@SuppressWarnings("unused")
 	@Test
 	public void testToReach100Percent() {
 
-		Market m = new Market(null, null);
+		ProductQueries pq = new ProductQueries();
+		UserQueries uq = new UserQueries();
+		UserAccountQueries uaq = new UserAccountQueries();
+		Market m = new Market(null, null, null);
 		m.getProductService();
 		m.getUserService();
 		m.setProductService(null);
 		m.setUserService(null);
 		m = null;
-		@SuppressWarnings("unused")
+
 		Printer p = new Printer();
+		try {
+			CsvFilePaser.parseProducts("products.csv");
+			CsvFilePaser.parseUsers("users.csv");
+			CsvFilePaser.parseProducts("testProducts.csv");
+
+			CsvFilePaser.parseProducts("1.csv");
+			CsvFilePaser.parseUsers("2.csv");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		CsvFilePaser parser = new CsvFilePaser();
+		Printer.printUserAccounts(null);
 	}
 }
+// dkolesnikofff@gmail.com

@@ -4,13 +4,14 @@ import java.util.List;
 
 import com.kture.spring.entity.Product;
 import com.kture.spring.entity.User;
+import com.kture.spring.entity.UserAccount;
 
 /**
  * This class groups all operations related to the ordering goods in the market
  *
  */
-public interface MarketFacade {	
-	
+public interface MarketFacade {
+
 	/**
 	 * Creates new user. The id of user should be auto-generated during creation
 	 * and set in the returned object.
@@ -114,8 +115,10 @@ public interface MarketFacade {
 	 * @return Flag that shows whether product has been deleted.
 	 */
 	boolean deleteProduct(long id);
-	
+
 	List<User> getUsers();
-	
+
 	List<Product> getProducts();
+
+	List<UserAccount> getUserAccounts();
 }

@@ -2,20 +2,23 @@ package com.kture.spring.dao;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import com.kture.spring.entity.User;
 
 public class StorageUserDAO extends AbstractDAO implements UserDAO {
 
-	public Map<String, User> getUsers() {
-		return storage.getUsers();
+	public List<User> getUsers() {
+		List<User> res = new ArrayList<User>();
+		for (String str : storage.getUsers().keySet()) {
+			res.add((User) storage.getUsers().get(str));
+		}
+		return res;
 	}
 
 	@Override
 	public long generateId() {
 		long max = 0;
-		for (User u : storage.getUsers().values()) {
+		for (User u : getUsers()) {
 			if (u.getId() > max)
 				max = u.getId();
 		}
@@ -30,27 +33,33 @@ public class StorageUserDAO extends AbstractDAO implements UserDAO {
 	}
 
 	public User getById(long id) {
-		return storage.getUsers().get(String.valueOf(id));
+		return (User) storage.getUsers().get("user:" + String.valueOf(id));
 	}
 
 	public User update(User item) {
-		storage.getUsers().get(String.valueOf(item.getId()))
-				.setName(item.getName());
-		storage.getUsers().get(String.valueOf(item.getId()))
-				.setEmail(item.getEmail());
-		storage.getUsers().get(String.valueOf(item.getId()))
-				.setPhoneNumber(item.getPhoneNumber());
-		return storage.getUsers().get(String.valueOf(item.getId()));
+		if (item != null) {
+			((User) storage.getUsers().get(
+					"user:" + String.valueOf(item.getId()))).setName(item
+					.getName());
+			((User) storage.getUsers().get(
+					"user:" + String.valueOf(item.getId()))).setEmail(item
+					.getEmail());
+			((User) storage.getUsers().get(
+					"user:" + String.valueOf(item.getId())))
+					.setPhoneNumber(item.getPhoneNumber());
+		}
+		return (User) storage.getUsers().get(
+				"user:" + String.valueOf(item.getId()));
 	}
 
 	public boolean delete(long id) {
-		if (storage.getUsers().remove(String.valueOf(id)) != null)
+		if (storage.getUsers().remove("user:" + String.valueOf(id)) != null)
 			return true;
 		return false;
 	}
 
 	public User getByEmail(String email) {
-		for (User u : storage.getUsers().values())
+		for (User u : getUsers())
 			if (u.getEmail().equals(email))
 				return u;
 		return null;
@@ -58,7 +67,7 @@ public class StorageUserDAO extends AbstractDAO implements UserDAO {
 
 	public List<User> getByName(String name) {
 		List<User> res = new ArrayList<User>();
-		for (User u : storage.getUsers().values())
+		for (User u : getUsers())
 			if (u.getName().equals(name))
 				res.add(u);
 		return res;

@@ -1,18 +1,15 @@
 package com.kture.spring.services;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.List;
 
-import com.kture.spring.dao.StorageUserDAO;
+import com.kture.spring.dao.UserDAO;
 import com.kture.spring.entity.User;
 
-public class UserService extends AbstractService<StorageUserDAO> {
+public class UserService extends AbstractService<UserDAO> {
 
 	public List<User> getUsers() {
-		List<User> res = new ArrayList<User>();
-		for (User u : dao.getUsers().values())
-			res.add(u);
-		return res;
+		return dao.getUsers();
 	}
 
 	public User createUser(User user) {
@@ -40,6 +37,14 @@ public class UserService extends AbstractService<StorageUserDAO> {
 	public boolean deleteUser(long id) {
 		log.info("Remove user with id" + id);
 		return dao.delete(id);
+	}
+
+	public void commit() {
+		dao.commit();
+	}
+
+	public void reverse() throws IOException {
+		dao.reverse();
 	}
 
 }

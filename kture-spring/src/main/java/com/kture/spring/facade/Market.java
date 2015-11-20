@@ -1,15 +1,31 @@
 package com.kture.spring.facade;
 
+import java.io.IOException;
 import java.util.List;
+
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.kture.spring.entity.Product;
 import com.kture.spring.entity.User;
+import com.kture.spring.entity.UserAccount;
+import com.kture.spring.exceptions.InsufficientFundsException;
+import com.kture.spring.exceptions.OwnProductByingException;
 import com.kture.spring.services.*;
 
 public class Market implements MarketFacade {
 
-	UserService userService;
-	ProductService productService;
+	private UserService userService;
+	private ProductService productService;
+	private UserAccountService userAccountService;
+
+	public UserAccountService getUserAccountService() {
+		return userAccountService;
+	}
+
+	public void setUserAccountService(UserAccountService userAccountService) {
+		this.userAccountService = userAccountService;
+	}
 
 	public UserService getUserService() {
 		return userService;
@@ -27,13 +43,17 @@ public class Market implements MarketFacade {
 		this.productService = productService;
 	}
 
-	public Market(UserService u, ProductService p) {
+	public Market(UserService u, ProductService p, UserAccountService a) {
 		userService = u;
 		productService = p;
+		userAccountService = a;
 	}
 
 	public User createUser(User user) {
-		return userService.createUser(user);
+		User createdUser = userService.createUser(user);
+		if (createdUser != null)
+			userAccountService.createUserAccount(createdUser.getId());
+		return createdUser;
 	}
 
 	public User updateUser(User user) {
@@ -53,7 +73,12 @@ public class Market implements MarketFacade {
 	}
 
 	public boolean deleteUser(long id) {
-		return userService.deleteUser(id);
+		boolean wasAllRemoved = true;
+		for (Product p : productService.getProductsByUserId(id)) {
+			wasAllRemoved = productService.deleteProduct(p.getId());
+		}
+		return userAccountService.deleteUserAccount(id)
+				&& userService.deleteUser(id) && wasAllRemoved;
 	}
 
 	public Product createProduct(Product product) {
@@ -86,6 +111,42 @@ public class Market implements MarketFacade {
 
 	public List<Product> getProducts() {
 		return productService.getProducts();
+	}
+
+	public void commit() {
+		userService.commit();
+		productService.commit();
+	}
+
+	public void reverse() throws IOException {
+		userService.reverse();
+		productService.reverse();
+	}
+
+	public List<UserAccount> getUserAccounts() {
+		return userAccountService.getUserAccounts();
+	}
+
+	public UserAccount updateUserAccountFund(long userId, int fund)
+			throws InsufficientFundsException {
+		return userAccountService.updateUserAccountFund(userId, fund);
+	}
+
+	@Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Throwable.class)
+	public boolean buyProduct(long buyerId, long productId)
+			throws InsufficientFundsException, OwnProductByingException {
+		Product p = productService.getProductById(productId);
+		if (p.getUserId() == buyerId)
+			throw new OwnProductByingException("Can't buy own product!");
+		if (userAccountService.getUserAccount(buyerId).getFund() < p.getPrice())
+			throw new InsufficientFundsException("Insufficient funds!");
+		UserAccount seller = userAccountService.updateUserAccountFund(
+				p.getUserId(), p.getPrice());
+		UserAccount buyer = userAccountService.updateUserAccountFund(buyerId,
+				-p.getPrice());
+		boolean flag = (seller != null) && (buyer != null)
+				&& productService.deleteProduct(productId);
+		return flag;
 	}
 
 }

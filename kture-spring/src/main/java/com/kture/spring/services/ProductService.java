@@ -1,12 +1,12 @@
 package com.kture.spring.services;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.List;
 
-import com.kture.spring.dao.StorageProductDAO;
+import com.kture.spring.dao.ProductDAO;
 import com.kture.spring.entity.Product;
 
-public class ProductService extends AbstractService<StorageProductDAO> {
+public class ProductService extends AbstractService<ProductDAO> {
 
 	public Product createProduct(Product product) {
 		log.info("Create product " + product.toString());
@@ -36,10 +36,15 @@ public class ProductService extends AbstractService<StorageProductDAO> {
 	}
 
 	public List<Product> getProducts() {
-		List<Product> res = new ArrayList<Product>();
-		for (Product p : dao.getProducts().values())
-			res.add(p);
-		return res;
+		return dao.getProducts();
+	}
+
+	public void commit() {
+		dao.commit();
+	}
+
+	public void reverse() throws IOException {
+		dao.reverse();
 	}
 
 }

@@ -10,4 +10,8 @@ public interface DAO<T> {
 
 	boolean delete(long id);
 
+	public void commit();
+
+	public void reverse();
+
 }
