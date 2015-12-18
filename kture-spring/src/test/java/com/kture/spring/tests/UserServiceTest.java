@@ -42,7 +42,8 @@ public class UserServiceTest {
 		System.out
 				.println("\n--------------------\nCreating user with name =\"Den\""
 						+ " email=\"1@gmail.com\" phoneNumber=\"3040:\"");
-		market.createUser(new User("Den", "1@gmail.com", "3040"));
+		market.createUser(new User("userDen", "denpassword", "Den",
+				"1@gmail.com", "3040"));
 		Printer.printUsers(market.getUsers());
 		market.commit();
 		System.out.println("\n--------------------\nRemoving user with id=2:");
@@ -54,7 +55,8 @@ public class UserServiceTest {
 		Printer.printUsers(market.getUsers());
 		market.commit();
 		System.out.println("\n--------------------\nUpdate user with id=1:");
-		User update = new User("Kate", "2@gmail.com", "1234");
+		User update = new User("userKate", "katepas", "Kate", "2@gmail.com",
+				"1234");
 		update.setId(1);
 		market.updateUser(update);
 		Printer.printUsers(market.getUsers());

@@ -12,4 +12,6 @@ public interface UserDAO extends DAO<User> {
 
 	public List<User> getUsers();
 
+	User getByUsername(String username);
+
 }

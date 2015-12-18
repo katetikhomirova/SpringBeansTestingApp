@@ -24,6 +24,9 @@
 	<bean id="userAccountDao" class="com.kture.spring.dao.jdbc.MySqlUserAccountDAO">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
+	<bean id="userRoleDao" class="com.kture.spring.dao.jdbc.MySqlUserRoleDAO">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
 
 	<!-- <bean id="userDao" class="com.kture.spring.dao.StorageUserDAO"> <property 
 		name="storage" ref="storage" /> </bean> <bean id="productDao" class="com.kture.spring.dao.StorageProductDAO"> 
@@ -39,12 +42,16 @@
 	<bean id="userAccountService" class="com.kture.spring.services.UserAccountService">
 		<property name="dao" ref="userAccountDao" />
 	</bean>
+	<bean id="userRoleService" class="com.kture.spring.services.UserRoleService">
+		<property name="dao" ref="userRoleDao" />
+	</bean>
 
 	<!-- Facade bean -->
 	<bean id="market" class="com.kture.spring.facade.Market">
 		<constructor-arg name="u" ref="userService" />
 		<constructor-arg name="p" ref="productService" />
 		<constructor-arg name="a" ref="userAccountService" />
+		<constructor-arg name="uR" ref="userRoleService" />
 	</bean>
 
 	<bean id="dataSource"

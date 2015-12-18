@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.kture.spring.entity.Product;
+import com.kture.spring.entity.Role;
 import com.kture.spring.entity.User;
 import com.kture.spring.entity.UserAccount;
 import com.kture.spring.exceptions.InsufficientFundsException;
@@ -18,6 +19,7 @@ public class Market implements MarketFacade {
 	private UserService userService;
 	private ProductService productService;
 	private UserAccountService userAccountService;
+	private UserRoleService userRoleService;
 
 	public UserAccountService getUserAccountService() {
 		return userAccountService;
@@ -43,14 +45,26 @@ public class Market implements MarketFacade {
 		this.productService = productService;
 	}
 
-	public Market(UserService u, ProductService p, UserAccountService a) {
+	public UserRoleService getUserRoleService() {
+		return userRoleService;
+	}
+
+	public void setUserRoleService(UserRoleService userRoleService) {
+		this.userRoleService = userRoleService;
+	}
+
+	public Market(UserService u, ProductService p, UserAccountService a,
+			UserRoleService uR) {
 		userService = u;
 		productService = p;
 		userAccountService = a;
+		userRoleService = uR;
 	}
 
 	public User createUser(User user) {
 		User createdUser = userService.createUser(user);
+		userRoleService.createUserRole(createdUser.getId(),
+				createdUser.getUserName(), Role.USER);
 		if (createdUser != null)
 			userAccountService.createUserAccount(createdUser.getId());
 		return createdUser;
@@ -149,4 +163,19 @@ public class Market implements MarketFacade {
 		return flag;
 	}
 
+	@Override
+	public UserAccount getUserAccountByUserName(String username) {
+		User u = userService.getUserByUsername(username);
+		return userAccountService.getUserAccount(u.getId());
+	}
+
+	@Override
+	public void updateFunds(String username, int delta) {
+		User u = userService.getUserByUsername(username);
+		try {
+			userAccountService.updateUserAccountFund(u.getId(), delta);
+		} catch (InsufficientFundsException e) {
+			e.printStackTrace();
+		}
+	}
 }

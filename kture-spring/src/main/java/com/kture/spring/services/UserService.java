@@ -34,6 +34,10 @@ public class UserService extends AbstractService<UserDAO> {
 		return dao.getByName(name);
 	}
 
+	public User getUserByUsername(String username) {
+		return dao.getByUsername(username);
+	}
+
 	public boolean deleteUser(long id) {
 		log.info("Remove user with id" + id);
 		return dao.delete(id);

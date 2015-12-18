@@ -5,6 +5,8 @@ import java.util.List;
 import com.kture.spring.entity.Product;
 import com.kture.spring.entity.User;
 import com.kture.spring.entity.UserAccount;
+import com.kture.spring.exceptions.InsufficientFundsException;
+import com.kture.spring.exceptions.OwnProductByingException;
 
 /**
  * This class groups all operations related to the ordering goods in the market
@@ -121,4 +123,11 @@ public interface MarketFacade {
 	List<Product> getProducts();
 
 	List<UserAccount> getUserAccounts();
+
+	public boolean buyProduct(long buyerId, long productId)
+			throws InsufficientFundsException, OwnProductByingException;
+
+	UserAccount getUserAccountByUserName(String username);
+
+	void updateFunds(String username, int delta);
 }

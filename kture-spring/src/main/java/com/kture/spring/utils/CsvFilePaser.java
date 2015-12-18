@@ -26,7 +26,7 @@ public class CsvFilePaser {
 					.getAbsoluteFile()));
 			while ((line = br.readLine()) != null) {
 				String[] user = line.split(",");
-				User u = new User(user[1], user[2], user[3]);
+				User u = new User("ajj", "fg", user[1], user[2], user[3]);
 				u.setId(Long.parseLong(user[0]));
 				result.put("user:" + user[0], u);
 			}

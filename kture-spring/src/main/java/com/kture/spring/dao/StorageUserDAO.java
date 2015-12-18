@@ -73,4 +73,9 @@ public class StorageUserDAO extends AbstractDAO implements UserDAO {
 		return res;
 	}
 
+	@Override
+	public User getByUsername(String username) {
+		return null;
+	}
+
 }

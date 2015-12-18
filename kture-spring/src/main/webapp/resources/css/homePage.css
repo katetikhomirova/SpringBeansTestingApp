@@ -1,0 +1,24 @@
+#homeTaxiPic {
+	display: block;
+	margin-left: auto;
+    margin-right: auto;
+    margin-top: 20pt;
+}
+
+.well {
+	margin: 0 auto 10px;
+}
+
+.well p {
+	color:#68676d;
+	text-align:center;
+	font-size: 14pt;
+	padding-top: 5pt;
+}
+
+.col-md-6 a {
+	position: relative;	
+	top: 5pt;
+}
+
+

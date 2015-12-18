@@ -14,10 +14,11 @@ public class MySqlUserDAO extends JDBCAbstractDAO implements UserDAO {
 
 	public User create(User item) {
 		User user = null;
-		if (getJdbcTemplate().update(
-				UserQueries.INSERT,
-				new Object[] { item.getName(), item.getEmail(),
-						item.getPhoneNumber() }) > 0)
+		if (getJdbcTemplate()
+				.update(UserQueries.INSERT,
+						new Object[] { item.getUserName(), item.getPassword(),
+								item.getName(), item.getEmail(),
+								item.getPhoneNumber() }) > 0)
 			user = getByEmail(item.getEmail());
 		return user;
 	}
@@ -67,5 +68,17 @@ public class MySqlUserDAO extends JDBCAbstractDAO implements UserDAO {
 		List<User> res = getJdbcTemplate().query(UserQueries.GET_ALL,
 				new BeanPropertyRowMapper(User.class));
 		return res;
+	}
+
+	@Override
+	public User getByUsername(String username) {
+		User user = null;
+		if (getJdbcTemplate().query(UserQueries.GET_BY_USERNAME,
+				new Object[] { username },
+				new BeanPropertyRowMapper(User.class)).size() > 0)
+			user = getJdbcTemplate().queryForObject(
+					UserQueries.GET_BY_USERNAME, new Object[] { username },
+					new UserRowMapper());
+		return user;
 	}
 }

@@ -46,7 +46,7 @@ public class MainTest {
 		ProductQueries pq = new ProductQueries();
 		UserQueries uq = new UserQueries();
 		UserAccountQueries uaq = new UserAccountQueries();
-		Market m = new Market(null, null, null);
+		Market m = new Market(null, null, null, null);
 		m.getProductService();
 		m.getUserService();
 		m.setProductService(null);
